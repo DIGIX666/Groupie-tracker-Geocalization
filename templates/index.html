@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>Groupie Tracker</title>
+  <meta charset="UTF-8" >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="../favicon.jpg">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/search.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!---------------------------- HEADER ------------------------------>
+  <div class="header">
+    <a href="/"><h1>Groupie Tracker</h1></a>
+    <a class="search" href="/search-bar"><ion-icon name="search-outline"></ion-icon></a>
+  </div>
+
+
+  <!------------------------- SEARCH BAR ----------------------------->
+    
+  <!-- <div class="searchbox">
+    <div class="shadow"></div>
+    <input type="text" id="search" id="app" placeholder="Rechercher ce que vous voulez...">
+    <ion-icon name="search-outline"></ion-icon>
+    <div id="match-list"></div>
+  </div> -->
+  <!-- <input type="text"  placeholder="Search artists" id="search" />
+  <div id="match-list"></div> -->
+
+  <!-- <form autocomplete ="off" classe ="searching-machine">
+    <div id="search" class="search-page">    
+            <input id="myInput" placeholder="Search" type="text" name="searching-machine">
+            <ul id="results"></ul>
+  </form>
+  <div id="match-list"></div>  -->
+
+  <!------------------------------------------------------------------>
+
+  <!----------------- The flexible grid (content)--------------------->
+  <div class="row">
+    <div class="main">
+
+      <div class="flex-container" id="artist-container">
+
+        {{ range .}}
+        <div class="artist-card">
+          <a href="/artists?ID={{.ID}}">
+            <div class="circle" style="background-image: url(&quot;{{.Image}}&quot;);">
+              <div class="middle">
+                <div class="center"></div>
+              </div>
+            </div>
+            <div class="artist-info">
+              <span class="artist-title">{{.Name}}</span><br>
+            </div>
+          </a></div>
+          {{else}} <span> No Data Available</span>
+          {{end}}
+
+      </div>
+    </div>
+  </div>
+  <!------------------------------------------------------------------>
+<footer class="footer-bar">©Zakch & Thox66</footer>
+<!-- <script>
+function search_artists() {
+    let input = document.getElementById('search-artists').value
+    input=input.toLowerCase();
+    let x = document.getElementsByClassName('artist-card');
+    let y = document.getElementsByClassName('artist-page-info-data')
+      
+    for (i = 0; i < x.length; i++) { 
+        if (!x[i].innerHTML.toLowerCase().includes(input)) {
+            x[i].style.display="none";
+        }
+        else {
+            x[i].style.display="list-item";                 
+        }
+    }
+
+    for (i = 0; i < x.length; i++) {
+      if (!y[i].innerHTML.toLocaleLowerCase().includes(input)) {
+        y[i].style.display="none";
+      }
+      else {
+        y[i].style.display="list-item"
+      }
+    }
+}
+</script> -->
+<!-- <script src="../JS/app.js"></script> -->
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> 
+<!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script><script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../JS/app.js" defer type="text/babel"></script>  -->
+</body>
+</html>

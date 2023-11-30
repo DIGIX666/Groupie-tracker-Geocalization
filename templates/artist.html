@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Artist Page - {{.Artist.Name}}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+<style>
+#map {margin-left: auto;
+  margin-right: auto; width: 100%; height: 400px; }
+</style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <a href="/"><h1 href="/">Groupie Tracker</h1></a>
+  </div>
+
+  <!-- The flexible grid (content) -->
+  <div class="row">
+    <div class="main">
+      <h2 class="page-heading">{{.Artist.Name}}</h2>
+
+      <div class="flex-container artist-page-style" id="artist-container">
+
+        <div class="artist-page-card">
+          <div class="circle" id="artist-image" style="background-image: url('{{ .Artist.Image}} ');">
+            <div class="middle">
+            <div class="center"></div>
+          </div>
+          </div>
+        </div>
+        <div class="artist-page-card">
+          <span class="artist-page-info">Creation Date: </span><span id="creation-date"
+            class="artist-page-info-data">{{.Artist.CreationDate}}</span><br>
+          <span class="artist-page-info">First Album: </span><span id="first-album"
+            class="artist-page-info-data">{{.Artist.FirstAlbum}}</span id="firstAlbum"><br>
+          <span class="artist-page-info">Members: </span>
+          <ul id="members" class="artist-page-list">
+            {{range .Artist.Members}} <li>{{ . }}</li> {{end}}
+          </ul>
+        </div>
+
+      </div>
+
+
+      <h2 class="page-heading">Latest Concerts</h2>
+
+      <div class="flex-container artist-page-style">
+        <script>
+          var secondArr = Array()
+        </script>
+
+        {{range $key, $value := .DatesLocations}}
+        <div class="artist-page-card">
+          <span class="artist-page-info" id="okmany"> {{ $key }} </span>
+          <script>
+            myArr = ["{{ $key }}"]
+            secondArr.push(...myArr)
+          </script>
+          <div class="artist-page-concert">
+            {{range $value}} <span>{{ . }}</span><br> {{end}}
+          </div>
+        </div>
+          {{else}} <span class="artist-page-info"> No Concerts </span>
+       
+        {{end}}
+
+      </div>
+    </div>
+  </div>
+  <div id="map"></div>
+  
+ 
+  <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
+     
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiemFrY2giLCJhIjoiY2w3ZWh6MGVhMDBraDNybzF5ODBpcTVzYSJ9.0GaannyFOoyoiDzGsD1CEQ';
+
+    var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+    console.log(secondArr)
+    //--- Declare an Array of Locations that Need Markers...
+    var locations = secondArr;
+                 
+    //--- Declare Empty Array for Longitute-Latitude Centers...
+    var lnglat = Array()
+
+    //--- Draw the Map Centered...
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [-70.070159, 40.155872],
+      zoom: 0
+    }); 
+
+  //--- For Each Location Geocode the Address and Place Marker on Map...
+  locations.forEach(myGeocoder);
+
+  function myGeocoder(item, index) {  
+    mapboxClient.geocoding
+    .forwardGeocode({
+      query: item,
+      autocomplete: false,
+      limit: 1
+    })
+    .send()
+    .then(function (response) {
+      if (response &&
+      response.body &&
+      response.body.features &&
+      response.body.features.length
+      ){
+        //--- Get the Response from the MapBox Server...
+        var feature = response.body.features[0];
+            
+        //--- Console Display Where We're at in the List...
+        //console.log(locations[index]);
+        //console.log(response.body.features[0].center);
+            
+        //--- Get Longitude-Latitute Center of this Location from Response...
+        lnglat[index] = response.body.features[0].center
+
+        // Create a marker and add it to the map.
+        new mapboxgl.Marker().setLngLat(lnglat[index]).addTo(map);
+
+      }
+    });        
+}
+     /* console.log(geo)
+        mapboxgl.accessToken = 'pk.eyJ1IjoiemFrY2giLCJhIjoiY2w3ZWh6MGVhMDBraDNybzF5ODBpcTVzYSJ9.0GaannyFOoyoiDzGsD1CEQ';
+    const mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+
+    //--- Declare an Array of Locations that Need Markers...
+    var locations = ["123 Main St, Anytown, CA, 98765, United States",
+                     "321 Front St, Anytown, CA, 98765, United States"];
+                     
+    //--- Declare Empty Array for Longitute-Latitude Centers...
+    var lnglat = Array()
+    mapboxClient.geocoding
+    .forwardGeocode({
+    query: geo,
+    autocomplete: false,
+    limit: 20
+    })
+    .send()
+    .then((response) => {
+    if (
+    !response ||
+    !response.body ||
+    !response.body.features ||
+    !response.body.features.length
+    ) {
+    console.error('Invalid response:');
+    console.error(response);
+    return;
+    }
+    const feature = response.body.features[0];
+     
+    const map = new mapboxgl.Map({
+    container: 'map',
+    // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: feature.center,
+    zoom: 10
+    });
+     
+    // Create a marker and add it to the map.
+    new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
+    });*/
+    
+    </script>
+
+</body>
+
+</html>
